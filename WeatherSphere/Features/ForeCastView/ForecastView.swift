@@ -8,8 +8,76 @@
 import SwiftUI
 
 struct ForecastView: View {
+
+    @StateObject private var viewModel = ForecastViewModel()
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationView {
+            ScrollView {
+                VStack(spacing: 20) {
+                    HStack {
+                        Text("COMING WEEK OUTLOOK")
+                            .font(.caption)
+                            .fontWeight(.bold)
+                            .foregroundColor(.secondary)
+
+                        Spacer()
+
+                        HStack(spacing: 4) {
+                            Circle()
+                                .fill(Color.blue)
+                                .frame(width: 6, height: 6)
+                            Text("Live Updates")
+                                .font(.caption)
+                                .foregroundColor(.blue)
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(Color.blue.opacity(0.1))
+                        .cornerRadius(12)
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+
+                    LazyVStack(spacing: 16) {
+                        ForEach(viewModel.forecast) { day in
+                            WeatherDayCard(day: day)
+                        }
+                    }
+                    .padding(.horizontal)
+
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Image(systemName: "sun.haze")
+                                .foregroundColor(.blue)
+                            Text("Weekly Insight")
+                                .font(.headline)
+                                .foregroundColor(.blue)
+                        }
+
+                        Text(viewModel.weeklyInsight)
+                            .font(.footnote)
+                            .foregroundColor(Color(UIColor.darkGray))
+                            .lineSpacing(4)
+                    }
+                    .padding()
+                    .background(Color.blue.opacity(0.05))
+                    .cornerRadius(16)
+                    .padding(.horizontal)
+                    .padding(.bottom, 24)
+                }
+            }
+
+            .navigationTitle("7-Day Forecast")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {}) {
+                        Image(systemName: "calendar")
+                    }
+                }
+            }
+        }
     }
 }
 
