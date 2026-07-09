@@ -7,14 +7,12 @@
 
 import Foundation
 
-struct WeatherModel {
+struct CurrentWeather {
     let location: String
     let temperature: Int
     let condition: String
     let high: Int
     let low: Int
-    let hourlyForecast: [HourlyForecast]
-    let details: WeatherDetails
 }
 
 struct HourlyForecast: Identifiable {

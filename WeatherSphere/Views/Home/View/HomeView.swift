@@ -16,18 +16,39 @@ struct HomeView: View {
             ZStack {
                 Color.background.ignoresSafeArea()
 
-                if let weather = viewModel.weather {
+                if viewModel.isLoading && viewModel.currentWeather == nil {
+                    ProgressView("Fetching Weather...")
+                } else if let error = viewModel.errorMessage {
+                    VStack {
+                        Image(systemName: "exclamationmark.triangle")
+                            .font(.largeTitle)
+                            .foregroundColor(.red)
+                        Text(error)
+                            .multilineTextAlignment(.center)
+                            .padding()
+                        Button("Retry") {
+                            viewModel.fetchWeather(city: "Chennai")
+                        }
+                    }
+                } else {
                     ScrollView(showsIndicators: false) {
                         VStack(spacing: 24) {
-                            CurrentWeatherCard(weather: weather)
-                            HourlyForecastSection(foreCast: weather.hourlyForecast)
-                            WeatherDetailsSection(details: weather.details)
+
+                            if let currentData = viewModel.currentWeather {
+                                CurrentWeatherCard(weather: currentData)
+                            }
+
+                            if !viewModel.hourlyForecast.isEmpty {
+                                HourlyForecastSection(foreCast: viewModel.hourlyForecast)
+                            }
+
+                            if let details = viewModel.weatherDetails {
+                                WeatherDetailsSection(details: details)
+                            }
                         }
                         .padding(.horizontal)
                         .padding(.top, 16)
                     }
-                } else {
-                    ProgressView()
                 }
             }
 

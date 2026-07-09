@@ -18,7 +18,7 @@ struct HourlyCard: View {
                 .fontWeight(foreCast.isCurrent ? .bold : .regular)
 
             Image(systemName: foreCast.iconName)
-                .renderingMode(.original)
+                .foregroundColor(foreCast.isCurrent ? .white : .textPrimary)
                 .font(.title2)
 
             Text("\(foreCast.temperature)°")
@@ -36,8 +36,4 @@ struct HourlyCard: View {
 
         }
     }
-}
-
-#Preview {
-    HourlyCard(foreCast: HourlyForecast(time: "Now", iconName: "cloud.sun.fill", temperature: 72, isCurrent: false))
 }

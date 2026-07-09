@@ -9,38 +9,40 @@
 import Foundation
 
 class HomeWeatherViewModel: ObservableObject {
-    @Published var weather: WeatherModel?
+    @Published var currentWeather: CurrentWeather?
+    @Published var hourlyForecast: [HourlyForecast] = []
+    @Published var weatherDetails: WeatherDetails?
 
-    init() {
-        loadMockData()
+    @Published var isLoading: Bool = false
+    @Published var errorMessage: String?
+
+    private let repository: WeatherRepository
+
+    init(repository: WeatherRepository = DefaultWeatherRepository(dataTransferService: DefaultDataTransferService())) {
+        self.repository = repository
+        // Set your default city here
+        self.fetchWeather(city: "Chennai")
     }
 
-    // Simulating a network fetch
-    private func loadMockData() {
-        let hourly = [
-            HourlyForecast(time: "Now", iconName: "cloud.sun.fill", temperature: 72, isCurrent: true),
-            HourlyForecast(time: "2 PM", iconName: "sun.max.fill", temperature: 74, isCurrent: false),
-            HourlyForecast(time: "3 PM", iconName: "sun.max.fill", temperature: 75, isCurrent: false),
-            HourlyForecast(time: "4 PM", iconName: "cloud.sun.fill", temperature: 73, isCurrent: false),
-            HourlyForecast(time: "5 PM", iconName: "cloud.sun.fill", temperature: 71, isCurrent: false)
-        ]
+    func fetchWeather(city: String) {
+        self.errorMessage = nil
 
-        let details = WeatherDetails(
-            windSpeed: 12,
-            humidity: 45,
-            uvIndex: 4,
-            uvDescription: "Moderate",
-            precipitation: 0
-        )
+        repository.fetchWeather(for: city) { [weak self] result in
+            guard let self = self else {
+                return
+            }
 
-        self.weather = WeatherModel(
-            location: "San Francisco, CA",
-            temperature: 72,
-            condition: "Mostly Sunny",
-            high: 78,
-            low: 64,
-            hourlyForecast: hourly,
-            details: details
-        )
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let success):
+                    self.currentWeather = success.extractCurrentWeather()
+                    self.hourlyForecast = success.extractHourlyForecast()
+                    self.weatherDetails = success.extractWeatherDetails()
+                    self.isLoading = true
+                case .failure(let failure):
+                    self.errorMessage = failure.localizedDescription
+                }
+            }
+        }
     }
 }

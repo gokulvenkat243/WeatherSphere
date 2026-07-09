@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CurrentWeatherCard: View {
 
-    let weather: WeatherModel
+    let weather: CurrentWeather
 
     var body: some View {
         VStack(spacing: 12) {
@@ -55,11 +55,11 @@ struct CurrentWeatherCard: View {
                 .cornerRadius(16)
 
                 VStack {
-                    Text("HIGH")
+                    Text("LOW")
                         .font(.caption)
                         .fontWeight(.bold)
                         .foregroundColor(.textSecondary) // Updated
-                    Text("\(weather.high)°")
+                    Text("\(weather.low)°")
                         .fontWeight(.bold)
                         .foregroundColor(.textPrimary)
                 }
@@ -81,5 +81,5 @@ struct CurrentWeatherCard: View {
 }
 
 #Preview {
-    CurrentWeatherCard(weather: WeatherModel(location: "San Francisco, CA", temperature: 70, condition: "Mostly Sunny", high: 50, low: 70, hourlyForecast: [], details: WeatherDetails(windSpeed: 0, humidity: 0, uvIndex: 0, uvDescription: "", precipitation: 0)))
+    CurrentWeatherCard(weather: CurrentWeather(location: "Chennai", temperature: 20, condition: "HOT", high: 34, low: 23))
 }
